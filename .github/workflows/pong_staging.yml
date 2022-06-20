@@ -64,45 +64,45 @@ jobs:
           echo "${{ secrets[github.event.client_payload.fastlane_android_env] }}" > android/fastlane/.env
           cd android && bundle install
       - name: Distribute to firebase
-        run: cd android && bundle exec fastlane staging
+        run: cd android && bundle exec fastlane android staging
 
-  distribute-ios:
-    runs-on: macOS-latest
-    steps:
-      # Node
-      - uses: actions/checkout@v2
-        with:
-          repository: '${{ github.event.client_payload.repository }}'
-          token: '${{ secrets[github.event.client_payload.ping_access_token] }}'
-          ref: 'staging'
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: YARN Cache
-        uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            **/node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Pods Cache
-        uses: actions/cache@v2
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-      - name: YARN Install
-        run: |
-          echo "${{ secrets[github.event.client_payload.env] }}" > .env
-          yarn install
+  # distribute-ios:
+  #   runs-on: macOS-latest
+  #   steps:
+  #     # Node
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: '${{ github.event.client_payload.repository }}'
+  #         token: '${{ secrets[github.event.client_payload.ping_access_token] }}'
+  #         ref: 'staging'
+  #     - name: Get yarn cache directory path
+  #       id: yarn-cache-dir-path
+  #       run: echo "::set-output name=dir::$(yarn cache dir)"
+  #     - name: YARN Cache
+  #       uses: actions/cache@v2
+  #       id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+  #       with:
+  #         path: |
+  #           ${{ steps.yarn-cache-dir-path.outputs.dir }}
+  #           **/node_modules
+  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-yarn-
+  #     - name: Pods Cache
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ios/Pods
+  #         key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pods-
+  #     - name: YARN Install
+  #       run: |
+  #         echo "${{ secrets[github.event.client_payload.env] }}" > .env
+  #         yarn install
 
-      # Build
-      - name: Setup fastlane
-        run: |
-          echo "${{ secrets[github.event.client_payload.fastlane_ios_env] }}" > ios/fastlane/.env
-      - name: Distribute to firebase
-        run: cd ios && fastlane staging
+  #     # Build
+  #     - name: Setup fastlane
+  #       run: |
+  #         echo "${{ secrets[github.event.client_payload.fastlane_ios_env] }}" > ios/fastlane/.env
+  #     - name: Distribute to firebase
+  #       run: cd ios && fastlane staging
