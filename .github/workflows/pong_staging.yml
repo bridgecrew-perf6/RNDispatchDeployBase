@@ -104,5 +104,6 @@ jobs:
       - name: Setup fastlane
         run: |
           echo "${{ secrets[github.event.client_payload.fastlane_ios_env] }}" > ios/fastlane/.env
+          cd ios && bundle install
       - name: Distribute to firebase
         run: cd ios && bundle exec fastlane ios staging
